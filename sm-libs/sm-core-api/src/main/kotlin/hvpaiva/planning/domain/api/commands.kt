@@ -1,44 +1,60 @@
 package hvpaiva.planning.domain.api
 
 import hvpaiva.common.domain.api.AuditableAbstractCommand
-import hvpaiva.common.domain.api.model.AuditEvent
+import hvpaiva.common.domain.api.model.AuditEntry
 import hvpaiva.planning.domain.api.model.*
 import org.axonframework.modelling.command.TargetAggregateIdentifier
 import javax.validation.Valid
 
-abstract class PlanningCommand(open val targetAggregateId: PlanningId, override val auditEvent: AuditEvent) :
-    AuditableAbstractCommand(auditEvent)
-
-abstract class TaskCommand(open val targetAggregateId: TaskId, override val auditEvent: AuditEvent) :
-    AuditableAbstractCommand(auditEvent)
+// Planning Aggregate Commands
+abstract class PlanningCommand(open val targetAggregateId: PlanningId, override val auditEntry: AuditEntry) :
+    AuditableAbstractCommand(auditEntry)
 
 data class CreatePlanningCommand(
     @field:Valid val name: String,
     val description: String?,
     val team: Set<MemberId>,
     @TargetAggregateIdentifier override val targetAggregateId: PlanningId,
-    override val auditEvent: AuditEvent
-) : PlanningCommand(targetAggregateId, auditEvent)
+    override val auditEntry: AuditEntry
+) : PlanningCommand(targetAggregateId, auditEntry)
 
 data class CreateTaskCommand(
     @field:Valid val name: TaskName,
-    @TargetAggregateIdentifier override val targetAggregateId: TaskId,
-    override val auditEvent: AuditEvent
-) : TaskCommand(targetAggregateId, auditEvent)
+    val taskId: TaskId,
+    @TargetAggregateIdentifier override val targetAggregateId: PlanningId,
+    override val auditEntry: AuditEntry
+) : PlanningCommand(targetAggregateId, auditEntry)
 
 data class StartPlanningCommand(
     @TargetAggregateIdentifier override val targetAggregateId: PlanningId,
-    override val auditEvent: AuditEvent
-) : PlanningCommand(targetAggregateId, auditEvent)
+    override val auditEntry: AuditEntry
+) : PlanningCommand(targetAggregateId, auditEntry)
 
-data class StartEstimateTaskCommand(
+data class FinishPlanningCommand(
+    val totalEffort: Effort,
+    @TargetAggregateIdentifier override val targetAggregateId: PlanningId,
+    override val auditEntry: AuditEntry
+) : PlanningCommand(targetAggregateId, auditEntry)
+
+// Task Aggregate Commands
+
+abstract class TaskCommand(open val targetAggregateId: TaskId, override val auditEntry: AuditEntry) :
+    AuditableAbstractCommand(auditEntry)
+
+data class StartTaskEstimationCommand(
     @TargetAggregateIdentifier override val targetAggregateId: TaskId,
-    override val auditEvent: AuditEvent
-) : TaskCommand(targetAggregateId, auditEvent)
+    override val auditEntry: AuditEntry
+) : TaskCommand(targetAggregateId, auditEntry)
 
 data class EstimateTaskCommand(
     @field:Valid val effort: Effort,
     val member: MemberId,
     @TargetAggregateIdentifier override val targetAggregateId: TaskId,
-    override val auditEvent: AuditEvent
-) : TaskCommand(targetAggregateId, auditEvent)
+    override val auditEntry: AuditEntry
+) : TaskCommand(targetAggregateId, auditEntry)
+
+data class FinishTaskEstimationCommand(
+    @TargetAggregateIdentifier override val targetAggregateId: TaskId,
+    override val auditEntry: AuditEntry
+) : TaskCommand(targetAggregateId, auditEntry)
+

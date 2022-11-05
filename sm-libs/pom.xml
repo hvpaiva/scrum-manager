@@ -18,5 +18,6 @@
 
     <modules>
         <module>sm-core-api</module>
+        <module>sm-planning</module>
     </modules>
 </project>
