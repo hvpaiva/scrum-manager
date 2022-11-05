@@ -15,6 +15,14 @@ data class TaskId(val value: UUID) : Serializable {
     override fun toString(): String = value.toString()
 }
 
+data class MemberId(val value: UUID) : Serializable {
+    constructor() : this(UUID.randomUUID())
+
+    override fun toString(): String = value.toString()
+}
+
 data class TaskName(val code: String, val description: String)
 
 data class Effort(val value: Int)
+
+data class MemberEffort(val member: MemberId, val effort: Effort)
