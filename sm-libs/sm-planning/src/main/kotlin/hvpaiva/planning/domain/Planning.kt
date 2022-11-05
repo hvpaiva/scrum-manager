@@ -15,7 +15,7 @@ import org.axonframework.spring.stereotype.Aggregate
 import java.time.Duration
 import java.time.OffsetDateTime
 
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "planningSnapshotTriggerDefinition")
 internal class Planning {
     @AggregateIdentifier
     private lateinit var id: PlanningId
