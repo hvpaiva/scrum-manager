@@ -1,39 +1,58 @@
 package hvpaiva.planning.domain.api
 
 import hvpaiva.common.domain.api.AuditableAbstractEvent
-import hvpaiva.common.domain.api.model.AuditEvent
+import hvpaiva.common.domain.api.model.AuditEntry
 import hvpaiva.planning.domain.api.model.*
-import java.time.Duration
 
-abstract class PlanningEvent(open val aggregateId: PlanningId, override val auditEvent: AuditEvent) :
-    AuditableAbstractEvent(auditEvent)
+// Planning Aggregate Events
 
-abstract class TaskEvent(open val aggregateId: TaskId, override val auditEvent: AuditEvent) :
-    AuditableAbstractEvent(auditEvent)
+abstract class PlanningEvent(open val aggregateId: PlanningId, override val auditEntry: AuditEntry) :
+    AuditableAbstractEvent(auditEntry)
 
 data class PlanningCreatedEvent(
     val name: String,
     val description: String?,
     val team: Set<MemberId>,
     override val aggregateId: PlanningId,
-    override val auditEvent: AuditEvent
-) : PlanningEvent(aggregateId, auditEvent)
+    override val auditEntry: AuditEntry
+) : PlanningEvent(aggregateId, auditEntry)
 
 data class TaskCreatedEvent(
     val name: TaskName,
-    override val aggregateId: TaskId,
-    override val auditEvent: AuditEvent
-) : TaskEvent(aggregateId, auditEvent)
+    val taskId: TaskId,
+    override val aggregateId: PlanningId,
+    override val auditEntry: AuditEntry
+) : PlanningEvent(aggregateId, auditEntry)
 
 data class PlanningStartedEvent(
     override val aggregateId: PlanningId,
-    override val auditEvent: AuditEvent
-) : PlanningEvent(aggregateId, auditEvent)
+    override val auditEntry: AuditEntry
+) : PlanningEvent(aggregateId, auditEntry)
+
+data class PlanningFinishedEvent(
+    val totalEffort: Effort,
+    override val aggregateId: PlanningId,
+    override val auditEntry: AuditEntry
+) : PlanningEvent(aggregateId, auditEntry)
+
+// Task Aggregate Events
+
+abstract class TaskEvent(open val aggregateId: TaskId, override val auditEntry: AuditEntry) :
+    AuditableAbstractEvent(auditEntry)
+
+data class TaskEstimationStartedEvent(
+    override val aggregateId: TaskId,
+    override val auditEntry: AuditEntry
+) : TaskEvent(aggregateId, auditEntry)
 
 data class TaskEstimatedEvent(
     val effort: Effort,
-    val duration: Duration,
-    val estimations: Set<MemberEffort>,
+    val member: MemberId,
     override val aggregateId: TaskId,
-    override val auditEvent: AuditEvent
-) : TaskEvent(aggregateId, auditEvent)
+    override val auditEntry: AuditEntry
+) : TaskEvent(aggregateId, auditEntry)
+
+data class TaskEstimationFinishedEvent(
+    override val aggregateId: TaskId,
+    override val auditEntry: AuditEntry
+) : TaskEvent(aggregateId, auditEntry)
