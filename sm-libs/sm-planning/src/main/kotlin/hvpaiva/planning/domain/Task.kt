@@ -10,7 +10,7 @@ import org.axonframework.spring.stereotype.Aggregate
 import java.time.Duration
 import java.time.OffsetDateTime
 
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "taskSnapshotTriggerDefinition")
 internal class Task {
 
     @AggregateIdentifier

@@ -21,7 +21,7 @@ class WebsocketConfiguration : WebSocketMessageBrokerConfigurer {
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry
             .addEndpoint("scrum-manager")
-            .setAllowedOrigins("*")
+            .setAllowedOriginPatterns("*")
             .withSockJS()
     }
 }
